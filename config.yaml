@@ -1,0 +1,77 @@
+model: mainModel
+dataset: ml-100k
+do_train: True
+checkpoint_path: ''
+gpu_id: '0'
+use_gpu: True
+seed: 2026
+reproducibility: True
+state: INFO
+show_progress: True
+log_wandb: False
+
+n_steps: 200
+s_steps: 20
+dims_mlp: [300]
+time_embedding_size: 64
+flow_act_func: tanh
+flow_dropout: 0.4
+
+training_objective: flow
+path_type: relation_weibull
+weibull_lambda_min: 0.2
+weibull_lambda_max: 8.0
+weibull_k: 1.5
+relation_graph_diag_weight: 0.0
+
+history_projection_gamma: 0.0
+x0_mask_rate: 0.5
+flow_model_type: transformer
+max_seq_len: 50
+transformer_d_model: 64
+transformer_nhead: 4
+transformer_ff_multiplier: 2
+transformer_num_layers: 2
+use_causal_mask: True
+sort_order: relation_desc
+use_pos_emb: False
+use_relation_value_emb: False
+relation_film_type: relation_time
+transformer_decoder_type: mlp
+decoder_use_relation_scores: False
+decoder_relation_propagation: add
+decoder_relation_propagation_weight: 0.5
+loss_pop_weight: False
+aux_loss_weight: 0.1
+
+MODEL_INPUT_TYPE: LISTWISE
+
+USER_ID_FIELD: user_id
+ITEM_ID_FIELD: item_id
+RATING_FIELD: rating
+TIME_FIELD: timestamp
+load_col:
+    inter: [user_id, item_id, rating, timestamp]
+user_inter_num_interval: "[5,inf)"
+item_inter_num_interval: "[5,inf)"
+val_interval: {rating: "[4, inf)"}
+
+epochs: 500
+train_batch_size: 4096
+learner: adam
+learning_rate: 0.001
+eval_step: 1
+stopping_step: 40
+train_neg_sample_args: ~
+
+eval_args:
+  split: {'RS': [0.8, 0.1, 0.1]}
+  order: RO
+  group_by: user
+  mode: full
+repeatable: False
+metrics: ['Recall', 'NDCG']
+valid_metric: Recall@10
+eval_batch_size: 40960000
+weight_decay: 0.0
+topk: [10, 20]
